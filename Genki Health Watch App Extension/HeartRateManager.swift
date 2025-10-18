@@ -2,7 +2,6 @@ import SwiftUI
 import HealthKit
 import os
 
-
 // MARK: - HeartRateManager
 class HeartRateManager: NSObject, ObservableObject, HKLiveWorkoutBuilderDelegate, HKWorkoutSessionDelegate {
     
@@ -22,31 +21,19 @@ class HeartRateManager: NSObject, ObservableObject, HKLiveWorkoutBuilderDelegate
     override init() {
         super.init()
         checkAuthorizationAndStart()
-       
     }
     
-    
-    func uploadHeartRate(_ value: Double) {
-        let url = URL(string: "https://fastlane-ex-v1-64fbc-default-rtdb.firebaseio.com/heart_rate.json")!
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-
-        let data: [String: Any] = [
-            "timestamp": Date().timeIntervalSince1970,
-            "value": value
-        ]
-        request.httpBody = try? JSONSerialization.data(withJSONObject: data)
-
-        let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
-            if let error = error {
-                print("Error: \(error.localizedDescription)")
-            } else {
-                print("Uploaded successfully")
-            }
+    func getOrCreateDeviceID() -> String {
+        let key = "device_id"
+        if let existingID = StorageHelper.load(key: key) {
+            return existingID
+        } else {
+            let newID = UUID().uuidString
+            StorageHelper.save(key: key, data: newID)
+            return newID
         }
-        task.resume()
     }
+    
     
     private func checkAuthorizationAndStart() {
         guard HKHealthStore.isHealthDataAvailable() else { return }
@@ -74,7 +61,6 @@ class HeartRateManager: NSObject, ObservableObject, HKLiveWorkoutBuilderDelegate
         }
     }
 
-    
     func requestAuthorization() {
         let healthStore = HKHealthStore()
         let typesToShare: Set = [
@@ -144,16 +130,6 @@ class HeartRateManager: NSObject, ObservableObject, HKLiveWorkoutBuilderDelegate
     
     func workoutBuilder(_ workoutBuilder: HKLiveWorkoutBuilder,
                         didCollectDataOf collectedTypes: Set<HKSampleType>) {
-        
-      
-      
-//        DispatchQueue.main.async {
-//        
-//            self.heartRate = Double.random(in: 60...100)
-//            self.logger.debug("🕑 workoutBuilder fake 2-min heart rate recorded: \(self.heartRate) bpm")
-//            self.uploadHeartRate(self.heartRate)
-//        }
-        
         for type in collectedTypes {
             guard let quantityType = type as? HKQuantityType,
                   quantityType.identifier == HKQuantityTypeIdentifier.heartRate.rawValue else { continue }
@@ -161,30 +137,24 @@ class HeartRateManager: NSObject, ObservableObject, HKLiveWorkoutBuilderDelegate
             if let hr = workoutBuilder.statistics(for: quantityType)?
                 .mostRecentQuantity()?
                 .doubleValue(for: HKUnit(from: "count/min")) {
-                
                 DispatchQueue.main.async {
+                    HttpHelper.uploadHeartRate(self.heartRate)
                     self.heartRate = hr
-                    let now = Date()
-                    
-                    if self.lastRecordedDate == nil || now.timeIntervalSince(self.lastRecordedDate!) >= 30 {
-                        self.lastRecordedDate = now
-                        self.toastMessage = "💓 Heart rate: \(Int(hr)) bpm"
-                        self.showToast = true
-                        
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                            self.showToast = false
-                        }
-                        
-                        DispatchQueue.main.async {
-                        
-//                            self.heartRate = Double.random(in: 60...100)
-//                            self.logger.debug("🕑 workoutBuilder fake 2-min heart rate recorded: \(self.heartRate) bpm")
-                            self.uploadHeartRate(self.heartRate)
-                        }
-                        
-                        self.logger.debug("🕑 2-min heart rate recorded: \(Int(hr)) bpm")
-                    }
                 }
+//                DispatchQueue.main.async {
+//                    self.heartRate = hr
+//                   
+//                    let now = Date()
+//                    if self.lastRecordedDate == nil || now.timeIntervalSince(self.lastRecordedDate!) >= 30 {
+//                        self.lastRecordedDate = now
+//                        self.toastMessage = "💓 Heart rate: \(Int(hr)) bpm"
+//                        self.showToast = true
+//                        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+//                            self.showToast = false
+//                        }
+//                        self.logger.debug("🕑 2-min heart rate recorded: \(Int(hr)) bpm")
+//                    }
+//                }
             }
         }
     }

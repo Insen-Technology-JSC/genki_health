@@ -8,7 +8,7 @@
 import SwiftUI
 
 @main
-struct Genki_Health_Watch_AppApp: App {
+struct GenkiHealthApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()

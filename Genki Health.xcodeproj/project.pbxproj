@@ -107,6 +107,8 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				HeartRateManager.swift,
+				HttpHelper.swift,
+				StorageHepler.swift,
 			);
 			target = 2602CA9F2E96AB9F00F4B6FE /* Genki Health Watch App */;
 		};
