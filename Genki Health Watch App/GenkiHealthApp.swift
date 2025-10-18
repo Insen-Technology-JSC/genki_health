@@ -11,7 +11,8 @@ import SwiftUI
 struct GenkiHealthApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            HomeSelectionView()
+//            ContentView()
         }
     }
 }

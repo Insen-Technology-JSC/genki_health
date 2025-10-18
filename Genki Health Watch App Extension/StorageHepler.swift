@@ -3,6 +3,12 @@
 import Foundation
 import Security
 
+
+let kDeviceId = "device_id"
+let kClienSecret = "client_secret"
+let kClienId = "client_id"
+let kHubId = "hub_id"
+
 final class StorageHelper {
     static func save(key: String, data: String) {
         if let data = data.data(using: .utf8) {

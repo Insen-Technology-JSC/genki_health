@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct ContentView: View {
+struct MonitorHealthView: View {
     @StateObject private var hrManager = HeartRateManager()
 
     var body: some View {
@@ -11,6 +11,7 @@ struct ContentView: View {
                 Text("\(Int(hrManager.heartRate)) bpm")
                     .font(.title2)
             }
+            Divider()
 
             if hrManager.showToast {
                 Text(hrManager.toastMessage)
@@ -21,6 +22,7 @@ struct ContentView: View {
                     .transition(.opacity)
                     .zIndex(1)
             }
+            
         }
         .animation(.easeInOut, value: hrManager.showToast)
     }

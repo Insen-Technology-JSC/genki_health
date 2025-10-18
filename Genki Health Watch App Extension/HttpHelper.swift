@@ -7,7 +7,8 @@ struct CredentialResponse: Codable {
     let secret: String
 }
 
-struct Home: Codable {
+struct Home:Identifiable, Codable {
+    var id: String { hub_id }
     let name: String
     let hub_id: String
 }
@@ -85,7 +86,7 @@ final class HttpHelper {
             
             task.resume()
         }
-    
+
    static func getToken(clientId: String, clientSecret: String, completion: @escaping (String?) -> Void) {
         // 1️⃣ Tạo URL
         guard let url = URL(string: "https://auth.insentecs.cloud/oauth2/token") else {
