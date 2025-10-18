@@ -110,6 +110,7 @@
 			membershipExceptions = (
 				HeartRateManager.swift,
 				HttpHelper.swift,
+				HttpManager.swift,
 				LiveData.swift,
 				StorageHepler.swift,
 				TokenHelper.swift,

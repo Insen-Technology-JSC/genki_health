@@ -1,9 +1,3 @@
-//
-//  Genki_HealthApp.swift
-//  Genki Health Watch App
-//
-//  Created by tuanhuynh on 8/10/25.
-//
 
 import SwiftUI
 
@@ -11,8 +5,12 @@ import SwiftUI
 struct GenkiHealthApp: App {
     var body: some Scene {
         WindowGroup {
-            HomeSelectionView()
-//            ContentView()
+            if ((StorageHelper.load(key: kHubId)?.isEmpty) != nil) {
+                MonitorHealthView()
+            }else{
+                HomeSelectionView()
+            }
+
         }
     }
 }

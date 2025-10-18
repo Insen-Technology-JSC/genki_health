@@ -2,7 +2,6 @@ import SwiftUI
 import HealthKit
 import os
 
-// MARK: - HeartRateManager
 class HeartRateManager: NSObject, ObservableObject, HKLiveWorkoutBuilderDelegate, HKWorkoutSessionDelegate {
     
     @Published var heartRate: Double = 0.0
@@ -16,7 +15,9 @@ class HeartRateManager: NSObject, ObservableObject, HKLiveWorkoutBuilderDelegate
     
     // ✅ Thêm biến lưu danh sách home
       @Published var homes: [Home] = []
+      @Published var users: [User] = []
       @Published var selectedHome: Home? = nil
+      @Published var selectedUser: User? = nil
       @Published var isLoadingHomes = false
       @Published var homeError: String? = nil
     
@@ -26,7 +27,9 @@ class HeartRateManager: NSObject, ObservableObject, HKLiveWorkoutBuilderDelegate
 
     override init() {
         super.init()
-        checkAuthorizationAndStart()
+    }
+    
+    func checkRegisterApp(){
         let clientId = StorageHelper.load(key: kClienId) ?? ""
         let clientSecret = StorageHelper.load(key: kClienSecret) ?? ""
         if clientId.isEmpty && clientSecret.isEmpty {
@@ -44,8 +47,6 @@ class HeartRateManager: NSObject, ObservableObject, HKLiveWorkoutBuilderDelegate
         }
     }
     
-  
-    
     func registerApp(){
         let appId = getOrCreateDeviceID()
         let token = TokenHelper.generateTokenWithExp(serviceId: appId, hours: 120)
@@ -57,26 +58,39 @@ class HeartRateManager: NSObject, ObservableObject, HKLiveWorkoutBuilderDelegate
                 
                 StorageHelper.save(key: kClienSecret, data: credential.secret)
                 StorageHelper.save(key: kClienId, data: credential.id)
-
-                HttpHelper.getToken(clientId: credential.id, clientSecret: credential.secret) { token in
-                    if let token = token {
-                        self.logger.debug("✅access token: \(token)")
-                        LiveData.token = token
-                        DispatchQueue.main.async {
-                            self.isLoadingHomes = true
-                            self.homeError = nil
-                        }
-                        
-                        self.fetchHomes(token: token)
-                    } else {
-                        self.logger.debug("❌ Failed to get token")
-                    }
-            
-                }
+                self.getToken(clientId: credential.id, clientSecret: credential.secret)
+                
             } else {
                 self.logger.debug("❌ Failed to fetch credential")
             }
         }
+    }
+    
+    func getToken(clientId: String,clientSecret: String){
+        HttpHelper.getToken(clientId: clientId, clientSecret: clientSecret) { token in
+            if let token = token {
+                self.logger.debug("✅access token: \(token)")
+                LiveData.token = token
+                DispatchQueue.main.async {
+                    self.isLoadingHomes = true
+                    self.homeError = nil
+                }
+                
+                if(StorageHelper.load(key: kHubId) == nil){
+                    self.fetchHomes(token: token)
+                }
+            
+            } else {
+                self.logger.debug("❌ Failed to get token")
+            }
+        }
+    }
+    
+    func loadDataToCache(){
+        LiveData.hubId = StorageHelper.load(key: kHubId) ?? ""
+        LiveData.userId = StorageHelper.load(key: kUserId) ?? ""
+        LiveData.userName = StorageHelper.load(key: kUserName) ?? ""
+        
     }
     
     func fetchHomes(token: String){
@@ -85,6 +99,23 @@ class HeartRateManager: NSObject, ObservableObject, HKLiveWorkoutBuilderDelegate
                 DispatchQueue.main.async {
                     self.isLoadingHomes = false
                     self.homes = homes
+                    self.fetchUsers(token: token, hubId: "IST-GWH-2102-0001C031E907-L003032300001")
+                }
+            } else {
+                self.logger.debug("❌ Failed to fetch homes")
+                DispatchQueue.main.async {
+                    self.isLoadingHomes = true
+                    self.homeError = "Failed to fetch homes"
+                }
+            }
+        }
+    }
+    
+    func fetchUsers(token: String,hubId: String){
+        HttpHelper.getUsers(token: token, hubId: hubId) { users in
+            if let users = users {
+                DispatchQueue.main.async {
+                    self.users = users
                 }
             } else {
                 self.logger.debug("❌ Failed to fetch homes")
@@ -107,7 +138,7 @@ class HeartRateManager: NSObject, ObservableObject, HKLiveWorkoutBuilderDelegate
     }
     
     
-    private func checkAuthorizationAndStart() {
+    func checkAuthorizationAndStart() {
         guard HKHealthStore.isHealthDataAvailable() else { return }
 
         let heartRateType = HKQuantityType.quantityType(forIdentifier: .heartRate)!

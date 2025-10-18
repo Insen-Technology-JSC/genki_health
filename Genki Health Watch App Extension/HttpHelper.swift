@@ -13,6 +13,12 @@ struct Home:Identifiable, Codable {
     let hub_id: String
 }
 
+struct User:Identifiable, Codable {
+    var id: String { user_id }
+    let name: String
+    let user_id: String
+}
+
 final class HttpHelper {
    static func uploadHeartRate(_ value: Double) {
         let url = URL(string: "https://fastlane-ex-v1-64fbc-default-rtdb.firebaseio.com/heart_rate.json")!
@@ -29,7 +35,7 @@ final class HttpHelper {
             if let error = error {
                 print("Error: \(error.localizedDescription)")
             } else {
-                print("Uploaded successfully")
+                print("Uploaded successfully, hub_id:\(LiveData.hubId),user_id:\(LiveData.userId)")
             }
         }
         task.resume()
@@ -169,6 +175,42 @@ final class HttpHelper {
                 let homes = try JSONDecoder().decode([Home].self, from: data)
                 print("✅ Homes:", homes)
                 completion(homes)
+            } catch {
+                print("❌ JSON decode error:", error)
+                completion(nil)
+            }
+        }
+
+        task.resume()
+    }
+    
+    static func getUsers(token: String,hubId: String, completion: @escaping ([User]?) -> Void) {
+        //https://api.insentecs.cloud/things/v1/app/home/{hub_id}/users
+        guard let url = URL(string: "https://api.insentecs.cloud/things/v1/app/home/\(hubId)/users") else {
+            completion(nil)
+            return
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+            if let error = error {
+                print("❌ Request error:", error)
+                completion(nil)
+                return
+            }
+
+            guard let data = data else {
+                completion(nil)
+                return
+            }
+
+            do {
+                let users = try JSONDecoder().decode([User].self, from: data)
+                print("✅ Users:", users)
+                completion(users)
             } catch {
                 print("❌ JSON decode error:", error)
                 completion(nil)

@@ -24,6 +24,12 @@ struct MonitorHealthView: View {
             }
             
         }
+        .onAppear {
+            hrManager.loadDataToCache()
+            hrManager.getToken(clientId: StorageHelper.load(key: kClienId) ?? "", clientSecret:  StorageHelper.load(key: kClienSecret) ?? "")
+            hrManager.checkAuthorizationAndStart()
+        }
         .animation(.easeInOut, value: hrManager.showToast)
+        .navigationBarBackButtonHidden(true)
     }
 }

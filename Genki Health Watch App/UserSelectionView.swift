@@ -1,7 +1,7 @@
 
 import SwiftUI
 
-struct HomeSelectionView: View {
+struct UserSelectionView: View {
     
     @StateObject private var hrManager = HeartRateManager()
     @State private var navigateToMonitor = false
@@ -9,11 +9,11 @@ struct HomeSelectionView: View {
     var body: some View {
         NavigationStack{
             VStack {
-                List(hrManager.homes) { home in
+                List(hrManager.users) {user in
                     HStack {
-                        Text(home.name.isEmpty ? "(No name)" : home.name)
+                        Text(user.name.isEmpty ? "(No name)" : user.name)
                         Spacer()
-                        if hrManager.selectedHome?.hub_id == home.hub_id {
+                        if hrManager.selectedUser?.user_id == user.user_id {
                             Image(systemName: "checkmark.circle.fill")
                                 .foregroundColor(.green)
                         }
@@ -21,7 +21,7 @@ struct HomeSelectionView: View {
                     .contentShape(Rectangle())
                     .frame(height: 24)
                     .onTapGesture {
-                        hrManager.selectedHome = home
+                        hrManager.selectedUser = user
                     }
                     .listRowInsets(EdgeInsets(top: 2, leading: 8, bottom: 2, trailing: 8))
                    
@@ -29,22 +29,23 @@ struct HomeSelectionView: View {
                 .frame(height: 140)
                 Button(action: {
                     navigateToMonitor = true
-                    LiveData.hubId = hrManager.selectedHome?.hub_id ?? ""
-                    StorageHelper.save(key: kHubId, data: LiveData.hubId)
-                    
+                    LiveData.userId = hrManager.selectedUser?.user_id ?? ""
+                    StorageHelper.save(key: kUserId, data: LiveData.userId)
+                    StorageHelper.save(key: kUserName, data: hrManager.selectedUser?.name ??
+                    "")
                 }) {
-                    Text("Next")
+                    Text("Confirm")
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(hrManager.selectedHome == nil ? Color.gray.opacity(0.3) : Color.blue)
+                        .background(hrManager.selectedUser == nil ? Color.gray.opacity(0.3) : Color.blue)
                         .foregroundColor(.white)
                         .cornerRadius(12)
                 }
                 .padding()
-                .disabled(hrManager.selectedHome == nil)
+                .disabled(hrManager.selectedUser == nil)
                 // 👉 Navigation trigger
                 NavigationLink(
-                    destination: UserSelectionView(),
+                    destination: MonitorHealthView(),
                     isActive: $navigateToMonitor
                 ) {
                     EmptyView()
@@ -52,8 +53,7 @@ struct HomeSelectionView: View {
                 .hidden()
             }
             .onAppear {
-                hrManager.checkRegisterApp();
-                hrManager.fetchHomes(token:LiveData.token)
+                hrManager.fetchUsers(token:LiveData.token, hubId: LiveData.hubId)
             }
             .navigationTitle("Select Home")
         }

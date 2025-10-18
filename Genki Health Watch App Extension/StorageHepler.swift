@@ -8,6 +8,9 @@ let kDeviceId = "device_id"
 let kClienSecret = "client_secret"
 let kClienId = "client_id"
 let kHubId = "hub_id"
+let kUserId = "user_id"
+let kUserName = "user_name"
+
 
 final class StorageHelper {
     static func save(key: String, data: String) {
@@ -49,5 +52,13 @@ final class StorageHelper {
             kSecAttrAccount as String: key
         ]
         SecItemDelete(query as CFDictionary)
+    }
+    
+    static func clearAllData(){
+        save(key: kDeviceId, data: "")
+        save(key: kClienSecret, data: "")
+        save(key: kClienId, data: "")
+        save(key: kHubId, data: "")
+        save(key: kUserId, data: "")
     }
 }
