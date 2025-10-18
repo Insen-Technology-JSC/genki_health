@@ -100,7 +100,7 @@
 		2602CB072E96ADF200F4B6FE /* Exceptions for "Genki Health Watch App Extension" folder in "Genki Health Watch App Extension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				HeartRateManager.swift,
+				HealthManager.swift,
 				Info.plist,
 			);
 			target = 2602CAFB2E96ADF200F4B6FE /* Genki Health Watch App Extension */;
@@ -108,7 +108,7 @@
 		2602CB0D2E96B00100F4B6FE /* Exceptions for "Genki Health Watch App Extension" folder in "Genki Health Watch App" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				HeartRateManager.swift,
+				HealthManager.swift,
 				HttpHelper.swift,
 				HttpManager.swift,
 				LiveData.swift,

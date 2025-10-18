@@ -3,17 +3,17 @@ import SwiftUI
 
 struct HomeSelectionView: View {
     
-    @StateObject private var hrManager = HeartRateManager()
+    @StateObject private var httpManager = HttpManager()
     @State private var navigateToMonitor = false
     
     var body: some View {
         NavigationStack{
             VStack {
-                List(hrManager.homes) { home in
+                List(httpManager.homes) { home in
                     HStack {
                         Text(home.name.isEmpty ? "(No name)" : home.name)
                         Spacer()
-                        if hrManager.selectedHome?.hub_id == home.hub_id {
+                        if httpManager.selectedHome?.hub_id == home.hub_id {
                             Image(systemName: "checkmark.circle.fill")
                                 .foregroundColor(.green)
                         }
@@ -21,7 +21,7 @@ struct HomeSelectionView: View {
                     .contentShape(Rectangle())
                     .frame(height: 24)
                     .onTapGesture {
-                        hrManager.selectedHome = home
+                        httpManager.selectedHome = home
                     }
                     .listRowInsets(EdgeInsets(top: 2, leading: 8, bottom: 2, trailing: 8))
                    
@@ -29,19 +29,19 @@ struct HomeSelectionView: View {
                 .frame(height: 140)
                 Button(action: {
                     navigateToMonitor = true
-                    LiveData.hubId = hrManager.selectedHome?.hub_id ?? ""
+                    LiveData.hubId = httpManager.selectedHome?.hub_id ?? ""
                     StorageHelper.save(key: kHubId, data: LiveData.hubId)
                     
                 }) {
                     Text("Next")
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(hrManager.selectedHome == nil ? Color.gray.opacity(0.3) : Color.blue)
+                        .background(httpManager.selectedHome == nil ? Color.gray.opacity(0.3) : Color.blue)
                         .foregroundColor(.white)
                         .cornerRadius(12)
                 }
                 .padding()
-                .disabled(hrManager.selectedHome == nil)
+                .disabled(httpManager.selectedHome == nil)
                 // 👉 Navigation trigger
                 NavigationLink(
                     destination: UserSelectionView(),
@@ -52,8 +52,8 @@ struct HomeSelectionView: View {
                 .hidden()
             }
             .onAppear {
-                hrManager.checkRegisterApp();
-                hrManager.fetchHomes(token:LiveData.token)
+                httpManager.checkRegisterApp();
+                httpManager.fetchHomes(token:LiveData.token)
             }
             .navigationTitle("Select Home")
         }

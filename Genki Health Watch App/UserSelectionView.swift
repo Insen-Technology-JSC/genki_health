@@ -3,17 +3,17 @@ import SwiftUI
 
 struct UserSelectionView: View {
     
-    @StateObject private var hrManager = HeartRateManager()
+    @StateObject private var httpManager = HttpManager()
     @State private var navigateToMonitor = false
     
     var body: some View {
         NavigationStack{
             VStack {
-                List(hrManager.users) {user in
+                List(httpManager.users) {user in
                     HStack {
                         Text(user.name.isEmpty ? "(No name)" : user.name)
                         Spacer()
-                        if hrManager.selectedUser?.user_id == user.user_id {
+                        if httpManager.selectedUser?.user_id == user.user_id {
                             Image(systemName: "checkmark.circle.fill")
                                 .foregroundColor(.green)
                         }
@@ -21,7 +21,7 @@ struct UserSelectionView: View {
                     .contentShape(Rectangle())
                     .frame(height: 24)
                     .onTapGesture {
-                        hrManager.selectedUser = user
+                        httpManager.selectedUser = user
                     }
                     .listRowInsets(EdgeInsets(top: 2, leading: 8, bottom: 2, trailing: 8))
                    
@@ -29,20 +29,20 @@ struct UserSelectionView: View {
                 .frame(height: 140)
                 Button(action: {
                     navigateToMonitor = true
-                    LiveData.userId = hrManager.selectedUser?.user_id ?? ""
+                    LiveData.userId = httpManager.selectedUser?.user_id ?? ""
                     StorageHelper.save(key: kUserId, data: LiveData.userId)
-                    StorageHelper.save(key: kUserName, data: hrManager.selectedUser?.name ??
+                    StorageHelper.save(key: kUserName, data: httpManager.selectedUser?.name ??
                     "")
                 }) {
                     Text("Confirm")
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(hrManager.selectedUser == nil ? Color.gray.opacity(0.3) : Color.blue)
+                        .background(httpManager.selectedUser == nil ? Color.gray.opacity(0.3) : Color.blue)
                         .foregroundColor(.white)
                         .cornerRadius(12)
                 }
                 .padding()
-                .disabled(hrManager.selectedUser == nil)
+                .disabled(httpManager.selectedUser == nil)
                 // 👉 Navigation trigger
                 NavigationLink(
                     destination: MonitorHealthView(),
@@ -53,7 +53,7 @@ struct UserSelectionView: View {
                 .hidden()
             }
             .onAppear {
-                hrManager.fetchUsers(token:LiveData.token, hubId: LiveData.hubId)
+                httpManager.fetchUsers(token:LiveData.token, hubId: LiveData.hubId)
             }
             .navigationTitle("Select Home")
         }

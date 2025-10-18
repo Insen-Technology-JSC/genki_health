@@ -20,15 +20,17 @@ struct User:Identifiable, Codable {
 }
 
 final class HttpHelper {
-   static func uploadHeartRate(_ value: Double) {
-        let url = URL(string: "https://fastlane-ex-v1-64fbc-default-rtdb.firebaseio.com/heart_rate.json")!
+   static func uploadHealthDataToFirebase(_ hr: Double,_ spo2: Double,_ bodyTemperature: Double) {
+        let url = URL(string: "https://fastlane-ex-v1-64fbc-default-rtdb.firebaseio.com/health_data.json")!
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
 
         let data: [String: Any] = [
             "timestamp": Date().timeIntervalSince1970,
-            "value": value
+            "heart_rate": hr,
+            "spo2": spo2,
+            "body_temperature": bodyTemperature
         ]
         request.httpBody = try? JSONSerialization.data(withJSONObject: data)
         let task = URLSession.shared.dataTask(with: request) { (data, response, error) in

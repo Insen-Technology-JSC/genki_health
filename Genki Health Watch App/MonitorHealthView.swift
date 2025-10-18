@@ -1,18 +1,34 @@
 import SwiftUI
 
 struct MonitorHealthView: View {
-    @StateObject private var hrManager = HeartRateManager()
+    @StateObject private var hrManager = HealthManager()
+    @StateObject private var httpManager = HttpManager()
 
     var body: some View {
         ZStack {
             VStack(spacing: 12) {
-                Text("❤️ Heart Rate")
-                    .font(.headline)
-                Text("\(Int(hrManager.heartRate)) bpm")
-                    .font(.title2)
-            }
-            Divider()
+                HStack {
+                        Text("❤️ Heart Rate:")
+                        Spacer()
+                        Text("\(Int(hrManager.heartRate)) bpm")
+                            .font(.headline)
+                    }
 
+                    HStack {
+                        Text("🩸 SpO₂:")
+                        Spacer()
+                        Text(String(format: "%.1f %%", hrManager.spo2))
+                            .font(.headline)
+                    }
+
+                    HStack {
+                        Text("🌡️ Body Temp:")
+                        Spacer()
+                        Text(String(format: "%.1f ℃", hrManager.bodyTemperature))
+                            .font(.headline)
+                    }
+            }
+        
             if hrManager.showToast {
                 Text(hrManager.toastMessage)
                     .padding(8)
@@ -25,8 +41,8 @@ struct MonitorHealthView: View {
             
         }
         .onAppear {
-            hrManager.loadDataToCache()
-            hrManager.getToken(clientId: StorageHelper.load(key: kClienId) ?? "", clientSecret:  StorageHelper.load(key: kClienSecret) ?? "")
+            httpManager.loadDataToCache()
+            httpManager.getToken(clientId: StorageHelper.load(key: kClienId) ?? "", clientSecret:  StorageHelper.load(key: kClienSecret) ?? "")
             hrManager.checkAuthorizationAndStart()
         }
         .animation(.easeInOut, value: hrManager.showToast)
