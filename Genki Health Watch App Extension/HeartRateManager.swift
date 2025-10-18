@@ -21,14 +21,52 @@ class HeartRateManager: NSObject, ObservableObject, HKLiveWorkoutBuilderDelegate
     override init() {
         super.init()
         checkAuthorizationAndStart()
+        registerApp()
+    }
+    
+    func registerApp(){
+        let appId = getOrCreateDeviceID()
+        let token = TokenHelper.generateTokenWithExp(serviceId: appId, hours: 120)
+        self.logger.debug("appId:\(appId),token:\(token) ")
+        
+        HttpHelper.fetchCredential(appId: appId, token: token) { response in
+            if let credential = response {
+                self.logger.debug("✅ ID: \(credential.id)")
+                self.logger.debug("✅ AppID: \(credential.app_id)")
+                self.logger.debug("✅ Secret: \(credential.secret)")
+                
+                HttpHelper.getToken(clientId: credential.id, clientSecret: credential.secret) { token in
+                    if let token = token {
+                        print("✅ Access Token:", token)
+                        
+                        HttpHelper.getHomes(token: token) { homes in
+                            if let homes = homes {
+                                for home in homes {
+                                    print("🏠 Name: \(home.name), Hub ID: \(home.hub_id)")
+                                }
+                            } else {
+                                print("❌ Failed to fetch homes")
+                            }
+                        }
+                        
+                        
+                    } else {
+                        print("❌ Failed to get token")
+                    }
+            
+                }
+            } else {
+                self.logger.debug("❌ Failed to fetch credential")
+            }
+        }
     }
     
     func getOrCreateDeviceID() -> String {
         let key = "device_id"
         if let existingID = StorageHelper.load(key: key) {
-            return existingID
+            return existingID;
         } else {
-            let newID = UUID().uuidString
+            let newID = "GKA-" + UUID().uuidString
             StorageHelper.save(key: key, data: newID)
             return newID
         }
