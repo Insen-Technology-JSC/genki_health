@@ -42,8 +42,9 @@ struct MonitorHealthView: View {
         }
         .onAppear {
             httpManager.loadDataToCache()
-            httpManager.getToken(clientId: StorageHelper.load(key: kClienId) ?? "", clientSecret:  StorageHelper.load(key: kClienSecret) ?? "")
             hrManager.checkAuthorizationAndStart()
+            hrManager.initMonitors()
+            httpManager.getToken(clientId: StorageHelper.load(key: kClienId) ?? "", clientSecret:  StorageHelper.load(key: kClienSecret) ?? "")
         }
         .animation(.easeInOut, value: hrManager.showToast)
         .navigationBarBackButtonHidden(true)

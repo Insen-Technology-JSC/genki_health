@@ -19,9 +19,22 @@ struct User:Identifiable, Codable {
     let user_id: String
 }
 
+struct HealthEvent: Codable {
+    let hub_id: String
+    let user_id: String
+    let event_type: String
+}
+
+enum HealthEventType: String {
+    case spo2Low = "SPO2_LOW"
+    case bodyTemperatureHigh = "BODY_TEMPERATURE_HIGH"
+    case heartRateLow = "HEART_RATE_LOW"
+    case heartRateHigh = "HEART_RATE_HIGH"
+}
+
 final class HttpHelper {
    static func uploadHealthDataToFirebase(_ hr: Double,_ spo2: Double,_ bodyTemperature: Double) {
-        let url = URL(string: "https://fastlane-ex-v1-64fbc-default-rtdb.firebaseio.com/health_data.json")!
+       let url = URL(string: "https://fastlane-ex-v1-64fbc-default-rtdb.firebaseio.com/health_data/\(LiveData.hubId).json")!
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -37,7 +50,7 @@ final class HttpHelper {
             if let error = error {
                 print("Error: \(error.localizedDescription)")
             } else {
-                print("Uploaded successfully, hub_id:\(LiveData.hubId),user_id:\(LiveData.userId)")
+                print("Uploaded successfully, hub_id:\(LiveData.hubId),user_id:\(LiveData.userId),hr:\(hr),spo2:\(spo2),bodyTemperature:\(bodyTemperature) ")
             }
         }
         task.resume()
@@ -221,6 +234,45 @@ final class HttpHelper {
 
         task.resume()
     }
+    
+    static func sendEmergencyAlert(token: String, hubId: String, userId: String, eventType: String) {
+            guard let url = URL(string: "https://api.insentecs.cloud/things/v1/app/health/event") else {
+                print("❌ Invalid URL")
+                return
+            }
+            
+            var request = URLRequest(url: url)
+            request.httpMethod = "POST"
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            
+            let event = HealthEvent(hub_id: hubId, user_id: userId, event_type: eventType)
+            
+            do {
+                request.httpBody = try JSONEncoder().encode(event)
+            } catch {
+                print("❌ JSON encode error:", error.localizedDescription)
+                return
+            }
+            
+            let task = URLSession.shared.dataTask(with: request) { data, response, error in
+                if let error = error {
+                    print("❌ Request error:", error.localizedDescription)
+                    return
+                }
+                
+                if let httpResponse = response as? HTTPURLResponse {
+                    print("📡 Status code:", httpResponse.statusCode)
+                }
+                
+                if let data = data,
+                   let responseBody = String(data: data, encoding: .utf8) {
+                    print("📦 Response:", responseBody)
+                }
+            }
+            
+            task.resume()
+        }
 
     
 }

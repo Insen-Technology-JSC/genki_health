@@ -12,6 +12,7 @@
 		2602CB062E96ADF200F4B6FE /* Genki Health Watch App Extension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 2602CAFC2E96ADF200F4B6FE /* Genki Health Watch App Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		265926982EA33F9F008CECC0 /* SwiftJWT in Frameworks */ = {isa = PBXBuildFile; productRef = 265926972EA33F9F008CECC0 /* SwiftJWT */; };
 		2659269A2EA340D3008CECC0 /* SwiftJWT in Frameworks */ = {isa = PBXBuildFile; productRef = 265926992EA340D3008CECC0 /* SwiftJWT */; };
+		265926AA2EA38F95008CECC0 /* SwiftJWT in Frameworks */ = {isa = PBXBuildFile; productRef = 265926A92EA38F95008CECC0 /* SwiftJWT */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -108,6 +109,7 @@
 		2602CB0D2E96B00100F4B6FE /* Exceptions for "Genki Health Watch App Extension" folder in "Genki Health Watch App" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				AlertMonitor.swift,
 				HealthManager.swift,
 				HttpHelper.swift,
 				HttpManager.swift,
@@ -197,6 +199,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				265926AA2EA38F95008CECC0 /* SwiftJWT in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -388,6 +391,7 @@
 			);
 			name = GenkiHealth;
 			packageProductDependencies = (
+				265926A92EA38F95008CECC0 /* SwiftJWT */,
 			);
 			productName = GenkiHealth;
 			productReference = 26EEFDF72E98ED5A00BA774D /* GenkiHealth.app */;
@@ -953,6 +957,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = "Genki Health Watch App Extension/Genki Health Watch App Extension.entitlements";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 6XZ5QSMM2B;
@@ -969,14 +974,16 @@
 					"@executable_path/../../../../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
+				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.insens.genki.Genki-Health.watchkitapp.Genki-Health-Watch-App-Extension";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 4;
-				WATCHOS_DEPLOYMENT_TARGET = 8.7;
+				WATCHOS_DEPLOYMENT_TARGET = 11.0;
 			};
 			name = Debug;
 		};
@@ -984,6 +991,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = "Genki Health Watch App Extension/Genki Health Watch App Extension.entitlements";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 6XZ5QSMM2B;
@@ -1002,13 +1010,14 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.insens.genki.Genki-Health.watchkitapp.Genki-Health-Watch-App-Extension";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 4;
 				VALIDATE_PRODUCT = YES;
-				WATCHOS_DEPLOYMENT_TARGET = 8.7;
+				WATCHOS_DEPLOYMENT_TARGET = 11.0;
 			};
 			name = Release;
 		};
@@ -1257,6 +1266,11 @@
 			productName = SwiftJWT;
 		};
 		265926992EA340D3008CECC0 /* SwiftJWT */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 265926962EA33F9F008CECC0 /* XCRemoteSwiftPackageReference "Swift-JWT" */;
+			productName = SwiftJWT;
+		};
+		265926A92EA38F95008CECC0 /* SwiftJWT */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 265926962EA33F9F008CECC0 /* XCRemoteSwiftPackageReference "Swift-JWT" */;
 			productName = SwiftJWT;
