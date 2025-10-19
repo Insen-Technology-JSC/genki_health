@@ -5,7 +5,7 @@ struct HomeSelectionView: View {
     
     @StateObject private var httpManager = HttpManager()
     @State private var navigateToMonitor = false
-    
+    @EnvironmentObject var healthManager: HealthManager
     var body: some View {
         NavigationStack{
             VStack {
@@ -41,10 +41,12 @@ struct HomeSelectionView: View {
                         .cornerRadius(12)
                 }
                 .padding()
+                .background(Color.clear)
+                .buttonStyle(.plain)
                 .disabled(httpManager.selectedHome == nil)
                 // 👉 Navigation trigger
                 NavigationLink(
-                    destination: UserSelectionView(),
+                    destination: UserSelectionView().environmentObject(healthManager),
                     isActive: $navigateToMonitor
                 ) {
                     EmptyView()

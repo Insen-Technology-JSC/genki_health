@@ -40,7 +40,7 @@ final class HttpHelper {
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
 
         let data: [String: Any] = [
-            "timestamp": Date().timeIntervalSince1970,
+            "timestamp": Date().formatted(),
             "heart_rate": hr,
             "spo2": spo2,
             "body_temperature": bodyTemperature
@@ -109,6 +109,7 @@ final class HttpHelper {
         }
 
    static func getToken(clientId: String, clientSecret: String, completion: @escaping (String?) -> Void) {
+       print("HttpHelper,getToken clientId: \(clientId), clientSecret: \(clientSecret)")
         // 1️⃣ Tạo URL
         guard let url = URL(string: "https://auth.insentecs.cloud/oauth2/token") else {
             completion(nil)
@@ -135,7 +136,7 @@ final class HttpHelper {
         // 5️⃣ Gửi request
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
             if let error = error {
-                print("❌ Request error:", error)
+                print("HttpHelper,❌ Request error:", error)
                 completion(nil)
                 return
             }
@@ -148,7 +149,7 @@ final class HttpHelper {
             // 6️⃣ Parse JSON response
             do {
                 if let json = try JSONSerialization.jsonObject(with: data) as? [String: Any] {
-                    print("✅ Response JSON:", json)
+                    print("HttpHelper,✅ Response JSON:", json)
                     if let token = json["access_token"] as? String {
                         completion(token)
                         return
@@ -156,7 +157,7 @@ final class HttpHelper {
                 }
                 completion(nil)
             } catch {
-                print("❌ JSON parse error:", error)
+                print("HttpHelper,❌ JSON parse error: \(error), data: \(data)" )
                 completion(nil)
             }
         }
@@ -165,6 +166,8 @@ final class HttpHelper {
     }
     
     static func getHomes(token: String, completion: @escaping ([Home]?) -> Void) {
+       
+        print("HttpHelper, get home token:\(token)")
         guard let url = URL(string: "https://api.insentecs.cloud/things/v1/app/homes") else {
             completion(nil)
             return
@@ -176,7 +179,7 @@ final class HttpHelper {
 
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
             if let error = error {
-                print("❌ Request error:", error)
+                print("HttpHelper, get home Request error:", error)
                 completion(nil)
                 return
             }
@@ -188,10 +191,10 @@ final class HttpHelper {
 
             do {
                 let homes = try JSONDecoder().decode([Home].self, from: data)
-                print("✅ Homes:", homes)
+                print("HttpHelper, get home Homes:", homes)
                 completion(homes)
             } catch {
-                print("❌ JSON decode error:", error)
+                print("HttpHelper, get home jSON decode error:", error)
                 completion(nil)
             }
         }
@@ -212,7 +215,7 @@ final class HttpHelper {
 
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
             if let error = error {
-                print("❌ Request error:", error)
+                print("HttpHelper, get user Request error:", error)
                 completion(nil)
                 return
             }
@@ -224,10 +227,10 @@ final class HttpHelper {
 
             do {
                 let users = try JSONDecoder().decode([User].self, from: data)
-                print("✅ Users:", users)
+                print("HttpHelper, get user ✅ Users:", users)
                 completion(users)
             } catch {
-                print("❌ JSON decode error:", error)
+                print("HttpHelper, get user JSON decode error:", error)
                 completion(nil)
             }
         }

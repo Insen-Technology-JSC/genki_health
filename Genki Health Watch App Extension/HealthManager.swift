@@ -21,41 +21,46 @@ class HealthManager: NSObject, ObservableObject, HKLiveWorkoutBuilderDelegate, H
         super.init()
     }
     
+    func showToastMessage(_ message: String) {
+           DispatchQueue.main.async {
+               self.toastMessage = message
+               withAnimation {
+                   self.showToast = true
+               }
+           }
+           // Tự động ẩn sau 2 giây
+           DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+               withAnimation {
+                   self.showToast = false
+               }
+           }
+       }
+    
     func initMonitors() {
-        let duration = 120.0 // inta
         monitors[.spo2Low] = AlertMonitor(
             event: .spo2Low,
-            threshold: 96.0,
-            duration: duration,
-            isGreaterThan: false,
-            onTrigger: handleAlert
-        )
-        monitors[.heartRateHigh] = AlertMonitor(
-            event: .heartRateHigh,
-            threshold: 100.0,
-            duration: duration,
-            isGreaterThan: true,
-            onTrigger: handleAlert
-        )
-        monitors[.heartRateLow] = AlertMonitor(
-            event: .heartRateHigh,
-            threshold: 50.0,
-            duration: duration,
+            threshold: HealthConstants.spo2Low,
+            duration: HealthConstants.alertDuration,
             isGreaterThan: false,
             onTrigger: handleAlert
         )
         
-        monitors[.bodyTemperatureHigh] = AlertMonitor(
-            event: .bodyTemperatureHigh,
-            threshold: 38.0,
-            duration: duration,
+        monitors[.heartRateHigh] = AlertMonitor(
+            event: .heartRateHigh,
+            threshold: HealthConstants.hearRateHigh,
+            duration: HealthConstants.alertDuration,
             isGreaterThan: true,
             onTrigger: handleAlert
         )
+        
+        monitors[.heartRateLow] = AlertMonitor(
+            event: .heartRateLow,
+            threshold: HealthConstants.hearRateLow,
+            duration: HealthConstants.alertDuration,
+            isGreaterThan: false,
+            onTrigger: handleAlert
+        )
     }
-    
-    
-    
     
     func checkAuthorizationAndStart() {
         guard HKHealthStore.isHealthDataAvailable() else { return }
@@ -136,6 +141,7 @@ class HealthManager: NSObject, ObservableObject, HKLiveWorkoutBuilderDelegate, H
                     self.logger.error("❌ Begin collection failed: \(error.localizedDescription)")
                 } else {
                     self.logger.info("✅ Workout collection started successfully")
+                    self.scheduleBackgroundRefresh()
                 }
             }
             
@@ -172,14 +178,19 @@ class HealthManager: NSObject, ObservableObject, HKLiveWorkoutBuilderDelegate, H
                   let quantity = statistics.mostRecentQuantity() else { continue }
             
             DispatchQueue.main.async {
+                var spo2Value = self.spo2
+                var heartRateValue = self.heartRate
+                var bodyTemperatureValue = self.bodyTemperature
                 
                 switch quantityType.identifier {
                 case HKQuantityTypeIdentifier.heartRate.rawValue:
                     let hr = quantity.doubleValue(for: HKUnit(from: "count/min"))
-                    self.heartRate = hr
+                    //                    self.heartRate = hr
+                    heartRateValue = hr
                     self.queryLatestSpO2 { value in
                         if let spo2 = value {
-                            self.spo2 = spo2
+                            //                            self.spo2 = spo2
+                            spo2Value = spo2
                         } else {
                             self.logger.info("Không lấy được SpO2")
                         }
@@ -192,7 +203,14 @@ class HealthManager: NSObject, ObservableObject, HKLiveWorkoutBuilderDelegate, H
                 self.monitors[.spo2Low]?.update(value: self.spo2)
                 self.monitors[.heartRateLow]?.update(value: self.heartRate)
                 self.monitors[.heartRateHigh]?.update(value: self.heartRate)
-                HttpHelper.uploadHealthDataToFirebase(self.heartRate,self.spo2,self.bodyTemperature)
+                
+                if(spo2Value != self.spo2 || heartRateValue != self.heartRate || bodyTemperatureValue != self.bodyTemperature ){
+                    self.spo2 = spo2Value
+                    self.heartRate = heartRateValue
+                    self.bodyTemperature = bodyTemperatureValue
+                    HttpHelper.uploadHealthDataToFirebase(self.heartRate,self.spo2,self.bodyTemperature)
+                }
+                
             }
         }
     }
@@ -202,11 +220,6 @@ class HealthManager: NSObject, ObservableObject, HKLiveWorkoutBuilderDelegate, H
     private func handleAlert(value: Double,event: HealthEventType) {
         HttpHelper.sendEmergencyAlert(token: LiveData.token, hubId: LiveData.hubId, userId: LiveData.userId, eventType: event.rawValue)
         self.logger.info("✅ handle alert event:\(event.rawValue),value: \(value)")
-        DispatchQueue.main.async {
-            self.showToast = true
-            self.toastMessage = "⚠️ \(event.rawValue): \(String(format: "%.1f", value))"
-            print("Alert triggered for \(event.rawValue): \(value)")
-        }
     }
     
     func queryLatestBodyTemperature(completion: @escaping (Double?) -> Void) {
@@ -282,5 +295,49 @@ class HealthManager: NSObject, ObservableObject, HKLiveWorkoutBuilderDelegate, H
     
     func workoutSession(_ workoutSession: HKWorkoutSession, didFailWithError error: Error) {
         logger.error("Workout session failed: \(error.localizedDescription)")
+    }
+}
+
+
+extension HealthManager {
+    
+    /// Gọi hàm này sau khi startWorkout() để đăng ký background refresh
+    func scheduleBackgroundRefresh() {
+        let nextRefresh = Date().addingTimeInterval(60) // 1 phút sau
+        WKExtension.shared().scheduleBackgroundRefresh(withPreferredDate: nextRefresh, userInfo: nil) { error in
+            if let error = error {
+                self.logger.error("❌ Failed to schedule background refresh: \(error.localizedDescription)")
+            } else {
+                self.logger.info("⏰ Background refresh scheduled at \(nextRefresh.formatted())")
+            }
+        }
+    }
+
+    /// AppDelegate hoặc SceneDelegate sẽ gọi hàm này khi hệ thống wake app
+    func handleBackgroundTasks(_ backgroundTasks: Set<WKRefreshBackgroundTask>) {
+        for task in backgroundTasks {
+            if let refreshTask = task as? WKApplicationRefreshBackgroundTask {
+                self.logger.info("🔄 Handling background refresh task")
+
+                // 1️⃣ Kiểm tra session còn đang chạy không
+                if self.session == nil {
+                    self.logger.info("⚠️ Session is nil, restarting workout...")
+                    self.startWorkout()
+                } else {
+                    self.logger.info("✅ Session still active")
+                }
+
+                // 2️⃣ Push lại dữ liệu nếu cần
+                HttpHelper.uploadHealthDataToFirebase(self.heartRate, self.spo2, self.bodyTemperature)
+                
+                // 3️⃣ Lên lịch cho lần tiếp theo
+                self.scheduleBackgroundRefresh()
+
+                // 4️⃣ Đánh dấu task đã hoàn thành
+                refreshTask.setTaskCompletedWithSnapshot(false)
+            } else {
+                task.setTaskCompletedWithSnapshot(false)
+            }
+        }
     }
 }

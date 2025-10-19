@@ -110,6 +110,7 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				AlertMonitor.swift,
+				HealthConstants.swift,
 				HealthManager.swift,
 				HttpHelper.swift,
 				HttpManager.swift,
@@ -785,7 +786,7 @@
 				DEVELOPMENT_TEAM = 6XZ5QSMM2B;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = "Genki Health";
+				INFOPLIST_KEY_CFBundleDisplayName = "Genki Care";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Ứng dụng cần quyền đọc dữ liệu nhịp tim.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Ứng dụng cần quyền ghi dữ liệu sức khỏe";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
@@ -819,7 +820,7 @@
 				DEVELOPMENT_TEAM = 6XZ5QSMM2B;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = "Genki Health";
+				INFOPLIST_KEY_CFBundleDisplayName = "Genki Care";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Ứng dụng cần quyền đọc dữ liệu nhịp tim.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Ứng dụng cần quyền ghi dữ liệu sức khỏe";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
@@ -848,7 +849,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 6XZ5QSMM2B;
-				INFOPLIST_KEY_CFBundleDisplayName = "Genki Health";
+				INFOPLIST_KEY_CFBundleDisplayName = "Genki Care";
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.insens.genki.Genki-Health";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -863,7 +864,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 6XZ5QSMM2B;
-				INFOPLIST_KEY_CFBundleDisplayName = "Genki Health";
+				INFOPLIST_KEY_CFBundleDisplayName = "Genki Care";
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.insens.genki.Genki-Health";
 				PRODUCT_NAME = "$(TARGET_NAME)";

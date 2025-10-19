@@ -5,7 +5,7 @@ struct UserSelectionView: View {
     
     @StateObject private var httpManager = HttpManager()
     @State private var navigateToMonitor = false
-    
+    @EnvironmentObject var healthManager: HealthManager
     var body: some View {
         NavigationStack{
             VStack {
@@ -33,6 +33,7 @@ struct UserSelectionView: View {
                     StorageHelper.save(key: kUserId, data: LiveData.userId)
                     StorageHelper.save(key: kUserName, data: httpManager.selectedUser?.name ??
                     "")
+                    
                 }) {
                     Text("Confirm")
                         .frame(maxWidth: .infinity)
@@ -42,10 +43,12 @@ struct UserSelectionView: View {
                         .cornerRadius(12)
                 }
                 .padding()
+                .background(Color.clear)
+                .buttonStyle(.plain)
                 .disabled(httpManager.selectedUser == nil)
                 // 👉 Navigation trigger
                 NavigationLink(
-                    destination: MonitorHealthView(),
+                    destination: MonitorHealthView().environmentObject(healthManager),
                     isActive: $navigateToMonitor
                 ) {
                     EmptyView()
