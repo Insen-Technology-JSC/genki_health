@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2602CAA12E96AB9F00F4B6FE /* Genki Health Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 2602CAA02E96AB9F00F4B6FE /* Genki Health Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		2602CAFF2E96ADF200F4B6FE /* Intents.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2602CAFE2E96ADF200F4B6FE /* Intents.framework */; };
 		2602CB062E96ADF200F4B6FE /* Genki Health Watch App Extension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 2602CAFC2E96ADF200F4B6FE /* Genki Health Watch App Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		265926982EA33F9F008CECC0 /* SwiftJWT in Frameworks */ = {isa = PBXBuildFile; productRef = 265926972EA33F9F008CECC0 /* SwiftJWT */; };
@@ -16,20 +15,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		2602CAA22E96AB9F00F4B6FE /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 2602CA942E96AB9E00F4B6FE /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 2602CA9F2E96AB9F00F4B6FE;
-			remoteInfo = "Genki Health Watch App";
-		};
-		2602CAB02E96ABA000F4B6FE /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 2602CA942E96AB9E00F4B6FE /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 2602CA9F2E96AB9F00F4B6FE;
-			remoteInfo = "Genki Health Watch App";
-		};
 		2602CABA2E96ABA000F4B6FE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 2602CA942E96AB9E00F4B6FE /* Project object */;
@@ -44,13 +29,6 @@
 			remoteGlobalIDString = 2602CAFB2E96ADF200F4B6FE;
 			remoteInfo = "Genki Health Watch App Extension";
 		};
-		26EEFE042E98ED5C00BA774D /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 2602CA942E96AB9E00F4B6FE /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 26EEFDF62E98ED5A00BA774D;
-			remoteInfo = GenkiHealth;
-		};
 		26EEFE0E2E98ED5C00BA774D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 2602CA942E96AB9E00F4B6FE /* Project object */;
@@ -61,17 +39,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		2602CAC62E96ABA000F4B6FE /* Embed Watch Content */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
-			dstSubfolderSpec = 16;
-			files = (
-				2602CAA12E96AB9F00F4B6FE /* Genki Health Watch App.app in Embed Watch Content */,
-			);
-			name = "Embed Watch Content";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		2602CB0B2E96ADF200F4B6FE /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -86,14 +53,11 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		2602CA9A2E96AB9F00F4B6FE /* Genki Health.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Genki Health.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2602CAA02E96AB9F00F4B6FE /* Genki Health Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Genki Health Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		2602CAAF2E96ABA000F4B6FE /* Genki Health Watch AppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Genki Health Watch AppTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2602CAB92E96ABA000F4B6FE /* Genki Health Watch AppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Genki Health Watch AppUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2602CAFC2E96ADF200F4B6FE /* Genki Health Watch App Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Genki Health Watch App Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2602CAFE2E96ADF200F4B6FE /* Intents.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Intents.framework; path = System/Library/Frameworks/Intents.framework; sourceTree = SDKROOT; };
 		26EEFDF72E98ED5A00BA774D /* GenkiHealth.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GenkiHealth.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		26EEFE032E98ED5C00BA774D /* GenkiHealthTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GenkiHealthTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		26EEFE0D2E98ED5C00BA774D /* GenkiHealthUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GenkiHealthUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -173,13 +137,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		2602CAAC2E96ABA000F4B6FE /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		2602CAB62E96ABA000F4B6FE /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -201,13 +158,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				265926AA2EA38F95008CECC0 /* SwiftJWT in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		26EEFE002E98ED5C00BA774D /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -239,13 +189,10 @@
 		2602CA9B2E96AB9F00F4B6FE /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				2602CA9A2E96AB9F00F4B6FE /* Genki Health.app */,
 				2602CAA02E96AB9F00F4B6FE /* Genki Health Watch App.app */,
-				2602CAAF2E96ABA000F4B6FE /* Genki Health Watch AppTests.xctest */,
 				2602CAB92E96ABA000F4B6FE /* Genki Health Watch AppUITests.xctest */,
 				2602CAFC2E96ADF200F4B6FE /* Genki Health Watch App Extension.appex */,
 				26EEFDF72E98ED5A00BA774D /* GenkiHealth.app */,
-				26EEFE032E98ED5C00BA774D /* GenkiHealthTests.xctest */,
 				26EEFE0D2E98ED5C00BA774D /* GenkiHealthUITests.xctest */,
 			);
 			name = Products;
@@ -262,25 +209,6 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		2602CA992E96AB9F00F4B6FE /* Genki Health */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 2602CAC72E96ABA000F4B6FE /* Build configuration list for PBXNativeTarget "Genki Health" */;
-			buildPhases = (
-				2602CA982E96AB9F00F4B6FE /* Resources */,
-				2602CAC62E96ABA000F4B6FE /* Embed Watch Content */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				2602CAA32E96AB9F00F4B6FE /* PBXTargetDependency */,
-			);
-			name = "Genki Health";
-			packageProductDependencies = (
-			);
-			productName = "Genki Health";
-			productReference = 2602CA9A2E96AB9F00F4B6FE /* Genki Health.app */;
-			productType = "com.apple.product-type.application.watchapp2-container";
-		};
 		2602CA9F2E96AB9F00F4B6FE /* Genki Health Watch App */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 2602CAC32E96ABA000F4B6FE /* Build configuration list for PBXNativeTarget "Genki Health Watch App" */;
@@ -305,29 +233,6 @@
 			productName = "Genki Health Watch App";
 			productReference = 2602CAA02E96AB9F00F4B6FE /* Genki Health Watch App.app */;
 			productType = "com.apple.product-type.application";
-		};
-		2602CAAE2E96ABA000F4B6FE /* Genki Health Watch AppTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 2602CACA2E96ABA000F4B6FE /* Build configuration list for PBXNativeTarget "Genki Health Watch AppTests" */;
-			buildPhases = (
-				2602CAAB2E96ABA000F4B6FE /* Sources */,
-				2602CAAC2E96ABA000F4B6FE /* Frameworks */,
-				2602CAAD2E96ABA000F4B6FE /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				2602CAB12E96ABA000F4B6FE /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				2602CAB22E96ABA000F4B6FE /* Genki Health Watch AppTests */,
-			);
-			name = "Genki Health Watch AppTests";
-			packageProductDependencies = (
-			);
-			productName = "Genki Health Watch AppTests";
-			productReference = 2602CAAF2E96ABA000F4B6FE /* Genki Health Watch AppTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
 		};
 		2602CAB82E96ABA000F4B6FE /* Genki Health Watch AppUITests */ = {
 			isa = PBXNativeTarget;
@@ -398,29 +303,6 @@
 			productReference = 26EEFDF72E98ED5A00BA774D /* GenkiHealth.app */;
 			productType = "com.apple.product-type.application";
 		};
-		26EEFE022E98ED5C00BA774D /* GenkiHealthTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 26EEFE1C2E98ED5C00BA774D /* Build configuration list for PBXNativeTarget "GenkiHealthTests" */;
-			buildPhases = (
-				26EEFDFF2E98ED5C00BA774D /* Sources */,
-				26EEFE002E98ED5C00BA774D /* Frameworks */,
-				26EEFE012E98ED5C00BA774D /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				26EEFE052E98ED5C00BA774D /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				26EEFE062E98ED5C00BA774D /* GenkiHealthTests */,
-			);
-			name = GenkiHealthTests;
-			packageProductDependencies = (
-			);
-			productName = GenkiHealthTests;
-			productReference = 26EEFE032E98ED5C00BA774D /* GenkiHealthTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
 		26EEFE0C2E98ED5C00BA774D /* GenkiHealthUITests */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 26EEFE1D2E98ED5C00BA774D /* Build configuration list for PBXNativeTarget "GenkiHealthUITests" */;
@@ -454,15 +336,8 @@
 				LastSwiftUpdateCheck = 1640;
 				LastUpgradeCheck = 1640;
 				TargetAttributes = {
-					2602CA992E96AB9F00F4B6FE = {
-						CreatedOnToolsVersion = 16.4;
-					};
 					2602CA9F2E96AB9F00F4B6FE = {
 						CreatedOnToolsVersion = 16.4;
-					};
-					2602CAAE2E96ABA000F4B6FE = {
-						CreatedOnToolsVersion = 16.4;
-						TestTargetID = 2602CA9F2E96AB9F00F4B6FE;
 					};
 					2602CAB82E96ABA000F4B6FE = {
 						CreatedOnToolsVersion = 16.4;
@@ -473,10 +348,6 @@
 					};
 					26EEFDF62E98ED5A00BA774D = {
 						CreatedOnToolsVersion = 16.4;
-					};
-					26EEFE022E98ED5C00BA774D = {
-						CreatedOnToolsVersion = 16.4;
-						TestTargetID = 26EEFDF62E98ED5A00BA774D;
 					};
 					26EEFE0C2E98ED5C00BA774D = {
 						CreatedOnToolsVersion = 16.4;
@@ -501,34 +372,17 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				2602CA992E96AB9F00F4B6FE /* Genki Health */,
 				2602CA9F2E96AB9F00F4B6FE /* Genki Health Watch App */,
-				2602CAAE2E96ABA000F4B6FE /* Genki Health Watch AppTests */,
 				2602CAB82E96ABA000F4B6FE /* Genki Health Watch AppUITests */,
 				2602CAFB2E96ADF200F4B6FE /* Genki Health Watch App Extension */,
 				26EEFDF62E98ED5A00BA774D /* GenkiHealth */,
-				26EEFE022E98ED5C00BA774D /* GenkiHealthTests */,
 				26EEFE0C2E98ED5C00BA774D /* GenkiHealthUITests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		2602CA982E96AB9F00F4B6FE /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		2602CA9E2E96AB9F00F4B6FE /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		2602CAAD2E96ABA000F4B6FE /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -556,13 +410,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		26EEFE012E98ED5C00BA774D /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		26EEFE0B2E98ED5C00BA774D /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -574,13 +421,6 @@
 
 /* Begin PBXSourcesBuildPhase section */
 		2602CA9C2E96AB9F00F4B6FE /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		2602CAAB2E96ABA000F4B6FE /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -608,13 +448,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		26EEFDFF2E98ED5C00BA774D /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		26EEFE092E98ED5C00BA774D /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -625,16 +458,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		2602CAA32E96AB9F00F4B6FE /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 2602CA9F2E96AB9F00F4B6FE /* Genki Health Watch App */;
-			targetProxy = 2602CAA22E96AB9F00F4B6FE /* PBXContainerItemProxy */;
-		};
-		2602CAB12E96ABA000F4B6FE /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 2602CA9F2E96AB9F00F4B6FE /* Genki Health Watch App */;
-			targetProxy = 2602CAB02E96ABA000F4B6FE /* PBXContainerItemProxy */;
-		};
 		2602CABB2E96ABA000F4B6FE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 2602CA9F2E96AB9F00F4B6FE /* Genki Health Watch App */;
@@ -644,11 +467,6 @@
 			isa = PBXTargetDependency;
 			target = 2602CAFB2E96ADF200F4B6FE /* Genki Health Watch App Extension */;
 			targetProxy = 2602CB042E96ADF200F4B6FE /* PBXContainerItemProxy */;
-		};
-		26EEFE052E98ED5C00BA774D /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 26EEFDF62E98ED5A00BA774D /* GenkiHealth */;
-			targetProxy = 26EEFE042E98ED5C00BA774D /* PBXContainerItemProxy */;
 		};
 		26EEFE0F2E98ED5C00BA774D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -843,78 +661,6 @@
 			};
 			name = Release;
 		};
-		2602CAC82E96ABA000F4B6FE /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 6XZ5QSMM2B;
-				INFOPLIST_KEY_CFBundleDisplayName = "Genki Care";
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.insens.genki.Genki-Health";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SWIFT_VERSION = 5.0;
-			};
-			name = Debug;
-		};
-		2602CAC92E96ABA000F4B6FE /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 6XZ5QSMM2B;
-				INFOPLIST_KEY_CFBundleDisplayName = "Genki Care";
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.insens.genki.Genki-Health";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SWIFT_VERSION = 5.0;
-				VALIDATE_PRODUCT = YES;
-			};
-			name = Release;
-		};
-		2602CACB2E96ABA000F4B6FE /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 6XZ5QSMM2B;
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.insens.genki.Genki-Health-Watch-AppTests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = watchos;
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 4;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Genki Health Watch App.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Genki Health Watch App";
-				WATCHOS_DEPLOYMENT_TARGET = 11.5;
-			};
-			name = Debug;
-		};
-		2602CACC2E96ABA000F4B6FE /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 6XZ5QSMM2B;
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.insens.genki.Genki-Health-Watch-AppTests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = watchos;
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 4;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Genki Health Watch App.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Genki Health Watch App";
-				VALIDATE_PRODUCT = YES;
-				WATCHOS_DEPLOYMENT_TARGET = 11.5;
-			};
-			name = Release;
-		};
 		2602CACE2E96ABA000F4B6FE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1083,47 +829,6 @@
 			};
 			name = Release;
 		};
-		26EEFE172E98ED5C00BA774D /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 6XZ5QSMM2B;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.insens.genki.GenkiHealthTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/GenkiHealth.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/GenkiHealth";
-			};
-			name = Debug;
-		};
-		26EEFE182E98ED5C00BA774D /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 6XZ5QSMM2B;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.insens.genki.GenkiHealthTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/GenkiHealth.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/GenkiHealth";
-				VALIDATE_PRODUCT = YES;
-			};
-			name = Release;
-		};
 		26EEFE192E98ED5C00BA774D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1184,24 +889,6 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		2602CAC72E96ABA000F4B6FE /* Build configuration list for PBXNativeTarget "Genki Health" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				2602CAC82E96ABA000F4B6FE /* Debug */,
-				2602CAC92E96ABA000F4B6FE /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		2602CACA2E96ABA000F4B6FE /* Build configuration list for PBXNativeTarget "Genki Health Watch AppTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				2602CACB2E96ABA000F4B6FE /* Debug */,
-				2602CACC2E96ABA000F4B6FE /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		2602CACD2E96ABA000F4B6FE /* Build configuration list for PBXNativeTarget "Genki Health Watch AppUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -1225,15 +912,6 @@
 			buildConfigurations = (
 				26EEFE152E98ED5C00BA774D /* Debug */,
 				26EEFE162E98ED5C00BA774D /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		26EEFE1C2E98ED5C00BA774D /* Build configuration list for PBXNativeTarget "GenkiHealthTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				26EEFE172E98ED5C00BA774D /* Debug */,
-				26EEFE182E98ED5C00BA774D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

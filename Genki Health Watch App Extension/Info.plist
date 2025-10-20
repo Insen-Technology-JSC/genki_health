@@ -2,10 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>NSHealthShareUsageDescription</key>
-	<string>Ứng dụng cần quyền đọc dữ liệu nhịp tim.</string>
-	<key>NSHealthUpdateUsageDescription</key>
-	<string>Ứng dụng cần quyền ghi/truy cập dữ liệu sức khỏe.</string>
 	<key>NSExtension</key>
 	<dict>
 		<key>NSExtensionAttributes</key>

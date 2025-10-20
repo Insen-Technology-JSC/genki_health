@@ -68,9 +68,10 @@ class HealthManager: NSObject, ObservableObject, HKLiveWorkoutBuilderDelegate, H
         let heartRateType = HKQuantityType.quantityType(forIdentifier: .heartRate)!
         let oxygenSaturationType = HKQuantityType.quantityType(forIdentifier: .oxygenSaturation)!
         let bodyTempType = HKQuantityType.quantityType(forIdentifier: .bodyTemperature)!
-        healthStore.getRequestStatusForAuthorization(toShare: Set<HKSampleType>(), read: [heartRateType,oxygenSaturationType,bodyTempType]) { [weak self] status, error in
+        let stepCountype = HKQuantityType.quantityType(forIdentifier: .stepCount)!
+        healthStore.getRequestStatusForAuthorization(toShare: Set<HKSampleType>(), read: [heartRateType,oxygenSaturationType,bodyTempType,stepCountype]) { [weak self] status, error in
             guard let self = self else { return }
-            self.logger.debug("✅ Authorization value: \(status.rawValue)")
+            self.logger.debug("HealthManager.✅ Authorization value: \(status.rawValue)")
             switch status {
             case .unnecessary: //2
                 // Đã cấp quyền, tự start workout
@@ -79,7 +80,7 @@ class HealthManager: NSObject, ObservableObject, HKLiveWorkoutBuilderDelegate, H
                 // Chưa cấp quyền, yêu cầu user
                 DispatchQueue.main.async { self.requestAuthorization() }
             case .unknown:
-                print("⚠️ Unknown authorization status")
+                print("HealthManager,⚠️ Unknown authorization status")
             @unknown default:
                 break
             }
@@ -94,14 +95,15 @@ class HealthManager: NSObject, ObservableObject, HKLiveWorkoutBuilderDelegate, H
         let typesToRead: Set = [
             HKQuantityType.quantityType(forIdentifier: .heartRate)!,
             HKQuantityType.quantityType(forIdentifier: .oxygenSaturation)!,
-            HKQuantityType.quantityType(forIdentifier: .bodyTemperature)!
+            HKQuantityType.quantityType(forIdentifier: .bodyTemperature)!,
+            HKQuantityType.quantityType(forIdentifier: .stepCount)!
         ]
         
         healthStore.requestAuthorization(toShare: typesToShare, read: typesToRead) { success, error in
             if !success {
-                print("❌ Không được cấp quyền HealthKit: \(String(describing: error))")
+                print("HealthManager,❌ Không được cấp quyền HealthKit: \(String(describing: error))")
             } else {
-                print("✅ Đã được cấp quyền HealthKit")
+                print("HealthManager,✅ Đã được cấp quyền HealthKit")
                 self.startWorkout()
             }
         }
@@ -109,7 +111,7 @@ class HealthManager: NSObject, ObservableObject, HKLiveWorkoutBuilderDelegate, H
     
     
     func startWorkout() {
-        logger.info("🏋️ Starting workout session...")
+        logger.info("HealthManager,🏋️ Starting workout session...")
         
         // Nếu đang có session cũ, dừng lại
         if session != nil {
@@ -138,26 +140,26 @@ class HealthManager: NSObject, ObservableObject, HKLiveWorkoutBuilderDelegate, H
             // ⚡ Sau đó mới bắt đầu thu thập dữ liệu
             builder!.beginCollection(withStart: Date()) { success, error in
                 if let error = error {
-                    self.logger.error("❌ Begin collection failed: \(error.localizedDescription)")
+                    self.logger.error("HealthManager,❌ Begin collection failed: \(error.localizedDescription)")
                 } else {
-                    self.logger.info("✅ Workout collection started successfully")
+                    self.logger.info("HealthManager,✅ Workout collection started successfully")
                     self.scheduleBackgroundRefresh()
                 }
             }
             
         } catch {
-            logger.error("❌ Failed to start workout session: \(error.localizedDescription)")
+            logger.error("HealthManager,❌ Failed to start workout session: \(error.localizedDescription)")
         }
     }
     
     
     func stopWorkout() {
         builder?.endCollection(withEnd: Date()) { success, error in
-            if let error = error { self.logger.error("Failed to end collection: \(error.localizedDescription)") }
+            if let error = error { self.logger.error("HealthManager,Failed to end collection: \(error.localizedDescription)") }
         }
         builder?.finishWorkout { workout, error in
             if let error = error { self.logger.error("Finish workout error: \(error.localizedDescription)") }
-            else { self.logger.debug("✅ Workout finished") }
+            else { self.logger.debug("HealthManager,✅ Workout finished") }
         }
         session?.end()
         session = nil
@@ -192,7 +194,20 @@ class HealthManager: NSObject, ObservableObject, HKLiveWorkoutBuilderDelegate, H
                             //                            self.spo2 = spo2
                             spo2Value = spo2
                         } else {
-                            self.logger.info("Không lấy được SpO2")
+                            self.logger.info("HealthManager,Không lấy được SpO2")
+                        }
+                    }
+                    break
+                case HKQuantityTypeIdentifier.stepCount.rawValue:
+                    let hr = quantity.doubleValue(for: HKUnit(from: "count/min"))
+                    //                    self.heartRate = hr
+                    heartRateValue = hr
+                    self.queryLatestSpO2 { value in
+                        if let spo2 = value {
+                            //                            self.spo2 = spo2
+                            spo2Value = spo2
+                        } else {
+                            self.logger.info("HealthManager,Không lấy được SpO2")
                         }
                     }
                     break
@@ -215,11 +230,33 @@ class HealthManager: NSObject, ObservableObject, HKLiveWorkoutBuilderDelegate, H
         }
     }
     
+    func fetchStepCount(completion: @escaping (Double) -> Void) {
+        guard let stepType = HKQuantityType.quantityType(forIdentifier: .stepCount) else { return }
+
+        let startOfDay = Calendar.current.startOfDay(for: Date())
+        let predicate = HKQuery.predicateForSamples(withStart: startOfDay, end: Date(), options: .strictStartDate)
+
+        let query = HKStatisticsQuery(quantityType: stepType, quantitySamplePredicate: predicate, options: .cumulativeSum) { _, result, error in
+            var steps: Double = 0
+
+            if let sum = result?.sumQuantity() {
+                steps = sum.doubleValue(for: HKUnit.count())
+            }
+
+            DispatchQueue.main.async {
+                completion(steps)
+            }
+        }
+
+        healthStore.execute(query)
+    }
+
+    
     
     
     private func handleAlert(value: Double,event: HealthEventType) {
         HttpHelper.sendEmergencyAlert(token: LiveData.token, hubId: LiveData.hubId, userId: LiveData.userId, eventType: event.rawValue)
-        self.logger.info("✅ handle alert event:\(event.rawValue),value: \(value)")
+        self.logger.info("HealthManager,✅ handle alert event:\(event.rawValue),value: \(value)")
     }
     
     func queryLatestBodyTemperature(completion: @escaping (Double?) -> Void) {
@@ -234,7 +271,7 @@ class HealthManager: NSObject, ObservableObject, HKLiveWorkoutBuilderDelegate, H
                                   limit: 1,
                                   sortDescriptors: [sort]) { _, samples, error in
             if let error = error {
-                print("❌ Query Body Temp failed: \(error.localizedDescription)")
+                print("HealthManager,❌ Query Body Temp failed: \(error.localizedDescription)")
                 completion(nil)
                 return
             }
@@ -266,7 +303,7 @@ class HealthManager: NSObject, ObservableObject, HKLiveWorkoutBuilderDelegate, H
                                   limit: 1,
                                   sortDescriptors: [sort]) { _, samples, error in
             if let error = error {
-                print("❌ Query SpO2 failed: \(error.localizedDescription)")
+                print("HealthManager,❌ Query SpO2 failed: \(error.localizedDescription)")
                 completion(nil)
                 return
             }
@@ -289,12 +326,12 @@ class HealthManager: NSObject, ObservableObject, HKLiveWorkoutBuilderDelegate, H
     // MARK: - HKWorkoutSessionDelegate
     func workoutSession(_ workoutSession: HKWorkoutSession, didChangeTo toState: HKWorkoutSessionState, from fromState: HKWorkoutSessionState, date: Date) {
         //        logger.debug("Workout state changed: \(fromState.rawValue) -> \(toState.rawValue)")
-        logger.debug("🏋️ Session changed: \(fromState.rawValue) → \(toState.rawValue)") //.notStarted (1) -> .running (2)
+        logger.debug("HealthManager,🏋️ Session changed: \(fromState.rawValue) → \(toState.rawValue)") //.notStarted (1) -> .running (2)
         
     }
     
     func workoutSession(_ workoutSession: HKWorkoutSession, didFailWithError error: Error) {
-        logger.error("Workout session failed: \(error.localizedDescription)")
+        logger.error("HealthManager,Workout session failed: \(error.localizedDescription)")
     }
 }
 
@@ -306,9 +343,9 @@ extension HealthManager {
         let nextRefresh = Date().addingTimeInterval(60) // 1 phút sau
         WKExtension.shared().scheduleBackgroundRefresh(withPreferredDate: nextRefresh, userInfo: nil) { error in
             if let error = error {
-                self.logger.error("❌ Failed to schedule background refresh: \(error.localizedDescription)")
+                self.logger.error("HealthManager,❌ Failed to schedule background refresh: \(error.localizedDescription)")
             } else {
-                self.logger.info("⏰ Background refresh scheduled at \(nextRefresh.formatted())")
+                self.logger.info("HealthManager,⏰ Background refresh scheduled at \(nextRefresh.formatted())")
             }
         }
     }
@@ -317,14 +354,14 @@ extension HealthManager {
     func handleBackgroundTasks(_ backgroundTasks: Set<WKRefreshBackgroundTask>) {
         for task in backgroundTasks {
             if let refreshTask = task as? WKApplicationRefreshBackgroundTask {
-                self.logger.info("🔄 Handling background refresh task")
+                self.logger.info("HealthManager,🔄 Handling background refresh task")
 
                 // 1️⃣ Kiểm tra session còn đang chạy không
                 if self.session == nil {
-                    self.logger.info("⚠️ Session is nil, restarting workout...")
+                    self.logger.info("HealthManager,⚠️ Session is nil, restarting workout...")
                     self.startWorkout()
                 } else {
-                    self.logger.info("✅ Session still active")
+                    self.logger.info("HealthManager,✅ Session still active")
                 }
 
                 // 2️⃣ Push lại dữ liệu nếu cần
