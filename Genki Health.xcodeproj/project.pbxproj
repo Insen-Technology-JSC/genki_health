@@ -58,6 +58,7 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				AlertMonitor.swift,
+				EnvironmentConfig.swift,
 				HealthConstants.swift,
 				HealthManager.swift,
 				HttpHelper.swift,

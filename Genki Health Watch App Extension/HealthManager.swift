@@ -5,6 +5,7 @@ import os
 class HealthManager: NSObject, ObservableObject, HKLiveWorkoutBuilderDelegate, HKWorkoutSessionDelegate {
     
     @Published var spo2: Double = 0.0
+    @Published var stepCount: Double = 0.0
     @Published var bodyTemperature: Double = 0.0
     @Published var heartRate: Double = 0.0
     @Published var showToast: Bool = false
@@ -22,19 +23,19 @@ class HealthManager: NSObject, ObservableObject, HKLiveWorkoutBuilderDelegate, H
     }
     
     func showToastMessage(_ message: String) {
-           DispatchQueue.main.async {
-               self.toastMessage = message
-               withAnimation {
-                   self.showToast = true
-               }
-           }
-           // Tự động ẩn sau 2 giây
-           DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-               withAnimation {
-                   self.showToast = false
-               }
-           }
-       }
+        DispatchQueue.main.async {
+            self.toastMessage = message
+            withAnimation {
+                self.showToast = true
+            }
+        }
+        // Tự động ẩn sau 2 giây
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            withAnimation {
+                self.showToast = false
+            }
+        }
+    }
     
     func initMonitors() {
         monitors[.spo2Low] = AlertMonitor(
@@ -80,7 +81,7 @@ class HealthManager: NSObject, ObservableObject, HKLiveWorkoutBuilderDelegate, H
                 // Chưa cấp quyền, yêu cầu user
                 DispatchQueue.main.async { self.requestAuthorization() }
             case .unknown:
-                print("HealthManager,⚠️ Unknown authorization status")
+                self.logger.info("HealthManager,⚠️ Unknown authorization status")
             @unknown default:
                 break
             }
@@ -101,9 +102,9 @@ class HealthManager: NSObject, ObservableObject, HKLiveWorkoutBuilderDelegate, H
         
         healthStore.requestAuthorization(toShare: typesToShare, read: typesToRead) { success, error in
             if !success {
-                print("HealthManager,❌ Không được cấp quyền HealthKit: \(String(describing: error))")
+                self.logger.info("HealthManager,❌ Không được cấp quyền HealthKit: \(String(describing: error))")
             } else {
-                print("HealthManager,✅ Đã được cấp quyền HealthKit")
+                self.logger.info("HealthManager,✅ Đã được cấp quyền HealthKit")
                 self.startWorkout()
             }
         }
@@ -180,77 +181,78 @@ class HealthManager: NSObject, ObservableObject, HKLiveWorkoutBuilderDelegate, H
                   let quantity = statistics.mostRecentQuantity() else { continue }
             
             DispatchQueue.main.async {
-                var spo2Value = self.spo2
-                var heartRateValue = self.heartRate
-                var bodyTemperatureValue = self.bodyTemperature
+                let group = DispatchGroup()
+                var spo2Value: Double = 0.0
+                var stepCountValue: Double = 0.0
+                var heartRateValue: Double = 0.0
                 
                 switch quantityType.identifier {
                 case HKQuantityTypeIdentifier.heartRate.rawValue:
-                    let hr = quantity.doubleValue(for: HKUnit(from: "count/min"))
-                    //                    self.heartRate = hr
-                    heartRateValue = hr
+                    heartRateValue = quantity.doubleValue(for: HKUnit(from: "count/min"))
+                    
+                    group.enter()
                     self.queryLatestSpO2 { value in
-                        if let spo2 = value {
-                            //                            self.spo2 = spo2
-                            spo2Value = spo2
-                        } else {
-                            self.logger.info("HealthManager,Không lấy được SpO2")
-                        }
+                        if let v = value { spo2Value = v }
+                        group.leave()
                     }
-                    break
-                case HKQuantityTypeIdentifier.stepCount.rawValue:
-                    let hr = quantity.doubleValue(for: HKUnit(from: "count/min"))
-                    //                    self.heartRate = hr
-                    heartRateValue = hr
-                    self.queryLatestSpO2 { value in
-                        if let spo2 = value {
-                            //                            self.spo2 = spo2
-                            spo2Value = spo2
-                        } else {
-                            self.logger.info("HealthManager,Không lấy được SpO2")
-                        }
+                    
+                    group.enter()
+                    self.fetchStepCount { value in
+                        if let v = value { stepCountValue = v }
+                        group.leave()
                     }
-                    break
+                    
+                    group.notify(queue: .main) {
+                        if (spo2Value != self.spo2 || heartRateValue != self.heartRate || stepCountValue != self.stepCount) {
+                            self.spo2 = spo2Value
+                            self.heartRate = heartRateValue
+                            self.stepCount = stepCountValue
+                            self.bodyTemperature = 0.0
+                            
+                            self.logger.info("✅ uploadHealthDataToFirebase heartRate:\(self.heartRate), spo2:\(self.spo2), stepCount:\(self.stepCount)")
+                            HttpHelper.uploadHealthDataToFirebase(self.heartRate, self.spo2, self.bodyTemperature, self.stepCount)
+                        }
+                        self.monitors[.spo2Low]?.update(value: self.spo2)
+                        self.monitors[.heartRateLow]?.update(value: self.heartRate)
+                        self.monitors[.heartRateHigh]?.update(value: self.heartRate)
+                    }
                 default:
                     break
-                }
-                
-                self.monitors[.spo2Low]?.update(value: self.spo2)
-                self.monitors[.heartRateLow]?.update(value: self.heartRate)
-                self.monitors[.heartRateHigh]?.update(value: self.heartRate)
-                
-                if(spo2Value != self.spo2 || heartRateValue != self.heartRate || bodyTemperatureValue != self.bodyTemperature ){
-                    self.spo2 = spo2Value
-                    self.heartRate = heartRateValue
-                    self.bodyTemperature = bodyTemperatureValue
-                    HttpHelper.uploadHealthDataToFirebase(self.heartRate,self.spo2,self.bodyTemperature)
                 }
                 
             }
         }
     }
     
-    func fetchStepCount(completion: @escaping (Double) -> Void) {
-        guard let stepType = HKQuantityType.quantityType(forIdentifier: .stepCount) else { return }
+    func fetchStepCount(completion: @escaping (Double?) -> Void) {
+        guard let stepType = HKQuantityType.quantityType(forIdentifier: .stepCount) else {
+            completion(nil)
+            return
+        }
 
-        let startOfDay = Calendar.current.startOfDay(for: Date())
-        let predicate = HKQuery.predicateForSamples(withStart: startOfDay, end: Date(), options: .strictStartDate)
+        let now = Date()
+        let twoMinAgo = now.addingTimeInterval(-3600) // 1h
 
-        let query = HKStatisticsQuery(quantityType: stepType, quantitySamplePredicate: predicate, options: .cumulativeSum) { _, result, error in
-            var steps: Double = 0
+        let predicate = HKQuery.predicateForSamples(withStart: twoMinAgo, end: now, options: [])
 
-            if let sum = result?.sumQuantity() {
-                steps = sum.doubleValue(for: HKUnit.count())
+        let query = HKStatisticsQuery(quantityType: stepType,
+                                      quantitySamplePredicate: predicate,
+                                      options: .cumulativeSum) { _, result, error in
+            guard let result = result, let sum = result.sumQuantity() else {
+                DispatchQueue.main.async { completion(0) }
+                return
             }
-
+            let steps = sum.doubleValue(for: .count())
             DispatchQueue.main.async {
+                self.logger.info("✅ Steps in last 2 min: \(steps)")
                 completion(steps)
             }
         }
 
         healthStore.execute(query)
-    }
 
+    }
+    
     
     
     
@@ -271,7 +273,7 @@ class HealthManager: NSObject, ObservableObject, HKLiveWorkoutBuilderDelegate, H
                                   limit: 1,
                                   sortDescriptors: [sort]) { _, samples, error in
             if let error = error {
-                print("HealthManager,❌ Query Body Temp failed: \(error.localizedDescription)")
+                self.logger.info("HealthManager,❌ Query Body Temp failed: \(error.localizedDescription)")
                 completion(nil)
                 return
             }
@@ -303,7 +305,7 @@ class HealthManager: NSObject, ObservableObject, HKLiveWorkoutBuilderDelegate, H
                                   limit: 1,
                                   sortDescriptors: [sort]) { _, samples, error in
             if let error = error {
-                print("HealthManager,❌ Query SpO2 failed: \(error.localizedDescription)")
+                self.logger.info("HealthManager,❌ Query SpO2 failed: \(error.localizedDescription)")
                 completion(nil)
                 return
             }
@@ -349,13 +351,13 @@ extension HealthManager {
             }
         }
     }
-
+    
     /// AppDelegate hoặc SceneDelegate sẽ gọi hàm này khi hệ thống wake app
     func handleBackgroundTasks(_ backgroundTasks: Set<WKRefreshBackgroundTask>) {
         for task in backgroundTasks {
             if let refreshTask = task as? WKApplicationRefreshBackgroundTask {
                 self.logger.info("HealthManager,🔄 Handling background refresh task")
-
+                
                 // 1️⃣ Kiểm tra session còn đang chạy không
                 if self.session == nil {
                     self.logger.info("HealthManager,⚠️ Session is nil, restarting workout...")
@@ -363,13 +365,13 @@ extension HealthManager {
                 } else {
                     self.logger.info("HealthManager,✅ Session still active")
                 }
-
+                
                 // 2️⃣ Push lại dữ liệu nếu cần
-                HttpHelper.uploadHealthDataToFirebase(self.heartRate, self.spo2, self.bodyTemperature)
+                HttpHelper.uploadHealthDataToFirebase(self.heartRate, self.spo2, self.bodyTemperature,self.stepCount)
                 
                 // 3️⃣ Lên lịch cho lần tiếp theo
                 self.scheduleBackgroundRefresh()
-
+                
                 // 4️⃣ Đánh dấu task đã hoàn thành
                 refreshTask.setTaskCompletedWithSnapshot(false)
             } else {

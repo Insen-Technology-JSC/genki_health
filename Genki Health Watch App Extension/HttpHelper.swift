@@ -33,24 +33,30 @@ enum HealthEventType: String {
 }
 
 final class HttpHelper {
-   static func uploadHealthDataToFirebase(_ hr: Double,_ spo2: Double,_ bodyTemperature: Double) {
-       let url = URL(string: "https://fastlane-ex-v1-64fbc-default-rtdb.firebaseio.com/health_data/\(LiveData.hubId).json")!
+    
+   static func uploadHealthDataToFirebase(_ hr: Double,_ spo2: Double,_ bodyTemperature: Double,_ stepCount: Double) {
+       let userId = String(describing: StorageHelper.load(key: kUserId) ?? "")
+       if(userId.isEmpty == true){
+           return
+       }
+       let url = URL(string: "\(EnvironmentConfig.firebaseUrl)\(userId).json")!
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
 
         let data: [String: Any] = [
-            "timestamp": Date().formatted(),
+            "timestamp": Int(Date().timeIntervalSince1970),
             "heart_rate": hr,
             "spo2": spo2,
-            "body_temperature": bodyTemperature
+            "body_temperature": bodyTemperature,
+            "step_count":stepCount
         ]
         request.httpBody = try? JSONSerialization.data(withJSONObject: data)
         let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
             if let error = error {
                 print("Error: \(error.localizedDescription)")
             } else {
-                print("Uploaded successfully, hub_id:\(LiveData.hubId),user_id:\(LiveData.userId),hr:\(hr),spo2:\(spo2),bodyTemperature:\(bodyTemperature) ")
+                print("Uploaded successfully, hub_id:\(LiveData.hubId),user_id:\(LiveData.userId),hr:\(hr),spo2:\(spo2),bodyTemperature:\(bodyTemperature),stepCount:\(stepCount) ")
             }
         }
         task.resume()
@@ -58,7 +64,7 @@ final class HttpHelper {
     
     static func fetchCredential(appId: String, token: String, completion: @escaping (CredentialResponse?) -> Void) {
             // 1️⃣ Tạo URL
-            let urlString = "https://api.insentecs.cloud/management/v1/credential/app/\(appId)"
+            let urlString = "\(EnvironmentConfig.baseApiUrl)/management/v1/credential/app/\(appId)"
             guard let url = URL(string: urlString) else {
                 print("❌ Invalid URL")
                 completion(nil)
@@ -111,7 +117,7 @@ final class HttpHelper {
    static func getToken(clientId: String, clientSecret: String, completion: @escaping (String?) -> Void) {
        print("HttpHelper,getToken clientId: \(clientId), clientSecret: \(clientSecret)")
         // 1️⃣ Tạo URL
-        guard let url = URL(string: "https://auth.insentecs.cloud/oauth2/token") else {
+       guard let url = URL(string: "\(EnvironmentConfig.baseAuthUrl)/oauth2/token") else {
             completion(nil)
             return
         }
@@ -168,7 +174,7 @@ final class HttpHelper {
     static func getHomes(token: String, completion: @escaping ([Home]?) -> Void) {
        
         print("HttpHelper, get home token:\(token)")
-        guard let url = URL(string: "https://api.insentecs.cloud/things/v1/app/homes") else {
+        guard let url = URL(string: "\(EnvironmentConfig.baseApiUrl)/things/v1/app/homes") else {
             completion(nil)
             return
         }
@@ -203,8 +209,7 @@ final class HttpHelper {
     }
     
     static func getUsers(token: String,hubId: String, completion: @escaping ([User]?) -> Void) {
-        //https://api.insentecs.cloud/things/v1/app/home/{hub_id}/users
-        guard let url = URL(string: "https://api.insentecs.cloud/things/v1/app/home/\(hubId)/users") else {
+        guard let url = URL(string: "\(EnvironmentConfig.baseApiUrl)/things/v1/app/home/\(hubId)/users") else {
             completion(nil)
             return
         }
@@ -239,7 +244,7 @@ final class HttpHelper {
     }
     
     static func sendEmergencyAlert(token: String, hubId: String, userId: String, eventType: String) {
-            guard let url = URL(string: "https://api.insentecs.cloud/things/v1/app/health/event") else {
+            guard let url = URL(string: "\(EnvironmentConfig.baseApiUrl)/things/v1/app/health/event") else {
                 print("❌ Invalid URL")
                 return
             }
